@@ -17,8 +17,26 @@ const s3Client = new S3Client({
   },
 })
 
+// Add OPTIONS handler for CORS
+export async function OPTIONS() {
+  return NextResponse.json({}, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  })
+}
+
 export async function POST(request: Request) {
   try {
+    // Add CORS headers
+    const headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    }
+
     const data = await request.json()
     const timestamp = new Date().toISOString()
 
@@ -267,12 +285,19 @@ export async function POST(request: Request) {
       console.error('Failed to send owner email:', ownerEmailError)
     }
 
-    return NextResponse.json({ success: true, contractId })
+    return NextResponse.json({ success: true, contractId }, { headers })
   } catch (error) {
     console.error('Contract submission error:', error)
     return NextResponse.json(
       { error: 'Failed to process contract' },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        }
+      }
     )
   }
 }
