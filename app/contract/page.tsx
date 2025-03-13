@@ -110,11 +110,12 @@ export default function ContractPage() {
         signature,
         agreed,
         agreedLiability,
-        submissionDate, // Added explicit submission date
-        timestamp: submissionDate // Keeping timestamp for consistency
+        submissionDate,
+        timestamp: submissionDate
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL + '/contract-submission';
+      // Fix the API URL construction
+      const apiUrl = '/api/contract-submission';
         
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -128,7 +129,6 @@ export default function ContractPage() {
         throw new Error('Failed to submit contract')
       }
 
-      // Use window.location for form submission redirect
       window.location.href = '/thank-you'
     } catch (error) {
       console.error('Error submitting contract:', error)
